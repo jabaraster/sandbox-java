@@ -1,0 +1,38 @@
+@import "Common.less";
+
+body, div {
+    padding: 0;
+    margin: 0;
+}
+
+h1 {
+    margin: 0;
+    height: @title-height;
+    padding-left: 1em;
+    background: rgba(255, 255, 255, .8);
+    border-bottom: solid 1px rgba(0, 0, 0, .6);
+    z-index: 100;
+}
+
+div.menu {
+    box-shadow: rgba(0,0,0,.3) 0px 1px;
+    position: absolute;
+    top: @title-height;
+    left: 0;
+    width: @menu-width;
+    height: @content-height;
+    border-right: solid 1px rgba(30, 150, 30, 1);
+    z-index: 1;
+    .gradient();
+}
+
+div.map {
+    position: absolute;
+    top: @title-height;
+    left: @menu-width;
+    width: @screen-width - @menu-width;
+    height: @content-height;
+    background: rgba(255, 230, 230, 1);
+    border: solid @map-border-width rgba(255, 0, 0, 1);
+    z-index: -1;
+}
