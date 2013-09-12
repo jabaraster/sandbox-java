@@ -12,7 +12,7 @@ import org.h2.jdbcx.JdbcDataSource;
  */
 public class WebStarter {
     /**
-     * @throws NamingException
+     * @throws NamingException -
      */
     @SuppressWarnings({ "unused", "nls" })
     public static void initializeDataSource() throws NamingException {

@@ -10,11 +10,51 @@
   <script src="TopPage.js"></script>
 </head>
 <body>
+
+
+  <div id="menuBar" class="menuBar">
+      M<br>
+      e<br>
+      n<br>
+      u
+  </div>
   <div id="menu" class="menu">
-    Menu
+      <h2>メニュー</h2>
+      <div>検索</div>
   </div>
+
   <div id="map" class="map">
+      <img src="/ui/wicket/resource/org.apache.wicket.ajax.AbstractDefaultAjaxBehavior/indicator-ver-1378336460000.gif" />
+      <span>地図をロード中・・・</span>
   </div>
-  <h1>Map API Sample</h1>
+
+  <h1 class="title">Map API Sample</h1>
+
+  <div id="templates" style="display: none;">
+      <div class="balloon-content">
+          <form>
+              <h3 class="in-balloon">物件登録</h3>
+              <ul>
+                  <li>
+                      <label>建物名</label>
+                      <input type="text" />
+                  </li>
+                  <li>
+                      <label>画像</label>
+                      <input type="file" />
+                  </li>
+                  <li>
+                      <label>住所</label>
+                      <input type="text" class="address" placeholder="住所を取得中" />
+                  </li>
+                  <li>
+                      <button>登録</button>
+                  </li>
+              </ul>
+              <button class="marker-delete">キャンセル</button>
+          </form>
+      </div>
+  </div>
+
 </body>
 </html>

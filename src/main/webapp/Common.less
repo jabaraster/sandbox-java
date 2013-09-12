@@ -20,7 +20,7 @@
 
 @map-border-width: 1px;
 @title-height: 40px;
-@menu-width: 40px;
+@menu-bar-width: 50px;
 @screen-width: 980px - @map-border-width * 2;
 @screen-height: 643px - @map-border-width * 2;
 @content-height: @screen-height - @title-height;
@@ -66,4 +66,12 @@
     background: -ms-linear-gradient(top, @gradient-top 0%, @gradient-bottom 100%); /* IE10+ */
     background: linear-gradient(to bottom, @gradient-top 0%, @gradient-bottom 100%); /* W3C */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr=@gradient-top-hex, endColorstr=@gradient-bottom-hex,GradientType=0 ); /* IE6-9 */
+}
+
+.contentArea() {
+    position: absolute;
+    top: @title-height;
+    left: @menu-bar-width;
+    width: @screen-width - @menu-bar-width;
+    height: @content-height;
 }
