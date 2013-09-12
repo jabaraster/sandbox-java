@@ -12,7 +12,7 @@ function initialize() {
 
 function initializeControl() {
     var menu = $('#menu');
-    $('#menuBar').click(function() {
+    $('#menu-bar').click(function() {
         menu.toggle('normal');
     });
 }
@@ -94,6 +94,13 @@ function addMarker(pArgs) {
 
 function failGetCurrentPosition() {
     alert('現在地表示はサポートされません.');
+}
+
+function Marker() {
+}
+
+function Markers() {
+    var _gMarkers = [];
 }
 
 })();

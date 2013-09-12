@@ -7,6 +7,12 @@ body, div {
 
 ul {
     list-style: none;
+    margin: 0;
+    padding: 0;
+
+    > li > label {
+        line-height: 28px;
+    }
 }
 
 h1.title {
@@ -23,7 +29,7 @@ h3.in-balloon {
     margin-bottom: 3px;
 }
 
-div.menuBar {
+div.menu-bar {
     padding-top: 100px;
     font-size: xx-large;
     text-align: center;
@@ -75,17 +81,27 @@ div.map {
 }
 
 div.balloon-content {
+    label:after {
+        content: ':';
+    }
     ul > li {
         > label {
             text-align: right;
             display: inline-block;
-            width: 60px;
-        }
-        > label:after {
-            content: ':';
+            width: 80px;
         }
     }
     input {
         width: 300px;
+        font-size: large;
+    }
+    buttton {
+        display: block;
+        font-size: large;
+    }
+    textarea {
+        display: block;
+        width: 500px;
+        height: 5em;
     }
 }
