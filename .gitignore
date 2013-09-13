@@ -6,6 +6,8 @@ target
 src/main/webapp/WEB-INF/classes
 src/main/webapp/WEB-INF/test-classes
 
+.DS_Store
+
 # Package Files #
 *.jar
 *.war
