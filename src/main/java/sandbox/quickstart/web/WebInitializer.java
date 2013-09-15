@@ -93,10 +93,17 @@ public class WebInitializer extends GuiceServletContextListener {
         return Guice.createInjector(new JerseyServletModule() {
             @Override
             protected void configureServlets() {
-                install(new SinglePersistenceUnitJpaModule( //
-                        Environment.getApplicationName() //
-                        , new SystemPropertyToPostgreJpaPropertiesParser() //
-                ));
+                if (isDatabaseUrlSet()) {
+                    install(new SinglePersistenceUnitJpaModule( //
+                            Environment.getApplicationName() //
+                            , new SystemPropertyToPostgreJpaPropertiesParser() //
+                    ));
+                } else {
+                    install(new SinglePersistenceUnitJpaModule( //
+                            Environment.getApplicationName() + "_Local" // //$NON-NLS-1$
+                    ));
+                }
+
                 initializeJersey();
                 initializeWicket();
             }
@@ -154,6 +161,11 @@ public class WebInitializer extends GuiceServletContextListener {
                         + ",application/x-javascript" //
                         + ",image/svg+xml" //
         );
+    }
+
+    private static boolean isDatabaseUrlSet() {
+        final String p = System.getProperty(SystemPropertyToPostgreJpaPropertiesParser.KEY_DATABASE_URL);
+        return p != null && p.length() > 0;
     }
 
     /**
