@@ -1,5 +1,6 @@
 package sandbox.quickstart.service;
 
+import jabara.general.NotFound;
 import jabara.general.Sort;
 
 import java.util.List;
@@ -14,6 +15,13 @@ import com.google.inject.ImplementedBy;
  */
 @ImplementedBy(UserServiceImpl.class)
 public interface IUserService {
+
+    /**
+     * @param pId -
+     * @return -
+     * @throws NotFound -
+     */
+    EUser search(long pId) throws NotFound;
 
     /**
      * @param pSort ソート条件.

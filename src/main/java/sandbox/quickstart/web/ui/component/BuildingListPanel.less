@@ -1,0 +1,27 @@
+@import "../page/Common.less";
+
+div.BuildingListPanel {
+    padding: 5px;
+    > .menu {
+        > * {
+            display: inline-block;
+            float: right;
+        }
+    }
+
+    div.form-group {
+        width: 30%; /* 項目が３つなので、だいたい1/3の幅を取る */
+        display: inline-block;
+    }
+
+    div.navigator {
+        a, em {
+            font-size: large;
+            border-radius: @border-radius-small;
+            min-width: 30px;
+            display: inline-block;
+            text-align: center;
+        }
+    }
+}
+

@@ -15,16 +15,16 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.annotation.WebListener;
 
-import sandbox.quickstart.Environment;
-import sandbox.quickstart.service.IUserService;
-import sandbox.quickstart.web.rest.RestApplication;
-import sandbox.quickstart.web.ui.WicketApplication;
-
 import org.apache.wicket.protocol.http.IWebApplicationFactory;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.protocol.http.WicketFilter;
 import org.apache.wicket.util.IProvider;
 import org.eclipse.jetty.servlets.GzipFilter;
+
+import sandbox.quickstart.Environment;
+import sandbox.quickstart.service.IUserService;
+import sandbox.quickstart.web.rest.RestApplication;
+import sandbox.quickstart.web.ui.WicketApplication;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -102,14 +102,14 @@ public class WebInitializer extends GuiceServletContextListener {
             }
 
             private void initializeJersey() {
-                final Map<String, String> params = new HashMap<String, String>();
+                final Map<String, String> params = new HashMap<>();
                 params.put(ServletContainer.APPLICATION_CONFIG_CLASS, RestApplication.class.getName());
                 serve(PATH_REST + WILD_CARD).with(GuiceContainer.class, params);
             }
 
             private void initializeWicket() {
                 final String path = PATH_UI + WILD_CARD;
-                final Map<String, String> params = new HashMap<String, String>();
+                final Map<String, String> params = new HashMap<>();
                 params.put(WicketFilter.FILTER_MAPPING_PARAM, path);
 
                 // 一般的には"applicationClassName"というキーに対してアプリケーションクラス名を登録するのですが

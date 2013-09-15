@@ -1,38 +1,33 @@
 package sandbox.quickstart.web.ui;
 
-import jabara.general.ArgUtil;
-
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.servlet.http.HttpServletRequest;
-
-import sandbox.quickstart.model.FailAuthentication;
-import sandbox.quickstart.service.IAuthenticationService;
-import sandbox.quickstart.service.IAuthenticationService.AuthenticatedAs;
+import javax.servlet.http.HttpSession;
 
 import org.apache.wicket.Session;
 import org.apache.wicket.protocol.http.WebSession;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.cycle.RequestCycle;
 
+import sandbox.quickstart.model.FailAuthentication;
+import sandbox.quickstart.model.LoginUser;
+import sandbox.quickstart.service.IAuthenticationService;
+import sandbox.quickstart.web.LoginUserHolder;
+
 /**
  * 
  */
 public class AppSession extends WebSession {
-    private static final long                      serialVersionUID = -5522467353190211133L;
+    private static final long                serialVersionUID = -5522467353190211133L;
 
-    private final AtomicReference<AuthenticatedAs> authenticated    = new AtomicReference<AuthenticatedAs>();
-
-    private final IAuthenticationService           authenticationService;
+    private final AtomicReference<LoginUser> authenticated    = new AtomicReference<>();
 
     /**
      * @param pRequest -
-     * @param pAuthenticationService -
      */
-    public AppSession(final Request pRequest, final IAuthenticationService pAuthenticationService) {
+    public AppSession(final Request pRequest) {
         super(pRequest);
-        ArgUtil.checkNull(pAuthenticationService, "pAuthenticationService"); //$NON-NLS-1$
-        this.authenticationService = pAuthenticationService;
     }
 
     /**
@@ -42,14 +37,7 @@ public class AppSession extends WebSession {
         if (!isAuthenticatedCore()) {
             return false;
         }
-        switch (this.authenticated.get()) {
-        case NORMAL_USER:
-            return false;
-        case ADMINISTRATOR:
-            return true;
-        default:
-            throw new IllegalStateException();
-        }
+        return this.authenticated.get().isAdministrator();
     }
 
     /**
@@ -83,7 +71,11 @@ public class AppSession extends WebSession {
      * @throws FailAuthentication 認証NGの場合にスローして下さい.
      */
     public void login(final String pUserId, final String pPassword) throws FailAuthentication {
-        this.authenticated.set(this.authenticationService.login(pUserId, pPassword));
+        final LoginUser loginUser = getAuthenticationService().login(pUserId, pPassword);
+        this.authenticated.set(loginUser);
+
+        final HttpSession session = ((HttpServletRequest) RequestCycle.get().getRequest().getContainerRequest()).getSession();
+        LoginUserHolder.set(session, loginUser);
     }
 
     private boolean isAuthenticatedCore() {
@@ -95,6 +87,10 @@ public class AppSession extends WebSession {
      */
     public static AppSession get() {
         return (AppSession) Session.get();
+    }
+
+    private static IAuthenticationService getAuthenticationService() {
+        return WicketApplication.get().getInjector().getInstance(IAuthenticationService.class);
     }
 
     private static void invalidateHttpSession() {

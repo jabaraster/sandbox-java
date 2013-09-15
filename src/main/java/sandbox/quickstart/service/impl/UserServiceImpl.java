@@ -1,10 +1,10 @@
 package sandbox.quickstart.service.impl;
 
 import jabara.general.ArgUtil;
+import jabara.general.NotFound;
 import jabara.general.Sort;
 import jabara.jpa.JpaDaoBase;
 
-import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -33,6 +33,14 @@ public class UserServiceImpl extends JpaDaoBase implements IUserService {
     }
 
     /**
+     * @see sandbox.quickstart.service.IUserService#search(long)
+     */
+    @Override
+    public EUser search(final long pId) throws NotFound {
+        return this.findByIdCore(EUser.class, pId);
+    }
+
+    /**
      * @see sandbox.quickstart.service.IUserService#getAll(jabara.general.Sort)
      */
     @Override
@@ -42,7 +50,7 @@ public class UserServiceImpl extends JpaDaoBase implements IUserService {
         final CriteriaBuilder builder = em.getCriteriaBuilder();
         final CriteriaQuery<EUser> query = builder.createQuery(EUser.class);
         final Root<EUser> root = query.from(EUser.class);
-        query.orderBy(convertOrder(Arrays.asList(pSort), builder, root));
+        query.orderBy(convertOrder(pSort, builder, root));
         return em.createQuery(query).getResultList();
     }
 

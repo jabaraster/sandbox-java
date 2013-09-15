@@ -1,0 +1,101 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>地図情報システム</title>
+  <link href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
+  <link href="./MapPage.css" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-1.10.1.min.js"></script>
+  <script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+  <script src="http://maps.google.com/maps/api/js?v=3&sensor=false"></script>
+  <script src="./MapPage.js"></script>
+</head>
+
+<body>
+
+<wicket:extend>
+  <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+          <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+              </button>
+              <ul class="nav navbar-nav">
+                  <li class="active go-home">
+                      <a wicket:id="reloader" class="navbar-brand" href="#"><span>地図情報システム</span></a>
+                  </li>
+                  <li class="">
+                      <button class="function show-search btn btn-lg btn-info">
+                          <i class="glyphicon glyphicon-white glyphicon-search"></i>
+                          <span></span>
+                      </button>
+                  </li>
+                  <li>
+                      <button class="function current-pin btn btn-lg btn-success">
+                          <i class="glyphicon glyphicon-white glyphicon-map-marker"></i>
+                          <span></span>
+                      </button>
+                  </li>
+              </ul>
+          </div>
+          <div class="navbar-collapse navbar-right">
+              <ul class="nav navbar-nav">
+                  <li class="">
+                    <a wicket:id="goLogout" class="navbar-brand" href="#"><span>ログアウト</span></a>
+                  </li>
+              </ul>
+          </div><!--/.navbar-collapse -->
+      </div>
+  </div>
+
+  <div class="container">
+      <div class="buildings-container">
+          <div wicket:id="buildings"></div>
+      </div>
+      <div id="map" class="map">
+          <img src="/ui/wicket/resource/org.apache.wicket.ajax.AbstractDefaultAjaxBehavior/indicator-ver-1378336460000.gif" />
+          <span>地図をロード中・・・</span>
+      </div>
+  </div>
+
+  <div id="templates" style="display: none;">
+      <div class="balloon-content">
+          <form enctype="multipart/form-data" method="POST">
+              <fieldset class="form-group">
+                  <div class="form-group">
+                      <input type="text" name="name" class="form-control" placeholder="建物名" />
+                  </div>
+                  <div class="form-group">
+                      <input type="text" name="address" class="address form-control" placeholder="住所" />
+                      <button class="search-address btn btn-info">
+                          <i class="glyphicon glyphicon-white glyphicon-screenshot"></i>
+                          <span></span>
+                      </button>
+                  </div>
+                  <div class="form-group">
+                      <label>写真</label>
+                      <input type="file" name="image" class="" placeholder="画像" />
+                  </div>
+                  <div class="form-group">
+                      <label>自由入力欄</label>
+                      <textarea name="freeText" placeholder="自由入力欄"></textarea>
+                  </div>
+              </fieldset>
+              <button class="save btn btn-primary">
+                  <i class="glyphicon glyphicon-white glyphicon-ok"></i>
+                  <span>保存</span>
+              </button>
+              <button class="delete-marker btn btn-warning">
+                  <i class="glyphicon glyphicon-white glyphicon-remove-circle"></i>
+                  <span>削除</span>
+              </button>
+          </form>
+      </div>
+  </div>
+</wicket:extend>
+
+</body>
+</html>
