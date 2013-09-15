@@ -4,6 +4,7 @@
 package sandbox.quickstart.service;
 
 import sandbox.quickstart.model.FailAuthentication;
+import sandbox.quickstart.model.LoginUser;
 import sandbox.quickstart.service.impl.AuthenticationServiceImpl;
 
 import com.google.inject.ImplementedBy;
@@ -20,7 +21,7 @@ public interface IAuthenticationService {
      * @return -
      * @throws FailAuthentication
      */
-    AuthenticatedAs login(String pUserId, String pPassword) throws FailAuthentication;
+    LoginUser login(String pUserId, String pPassword) throws FailAuthentication;
 
     /**
      * @author jabaraster

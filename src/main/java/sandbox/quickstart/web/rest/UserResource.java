@@ -17,7 +17,7 @@ import sandbox.quickstart.service.IUserService;
 /**
  *
  */
-@Path("user")
+@Path("registrationUser")
 public class UserResource {
 
     private final IUserService employeeService;

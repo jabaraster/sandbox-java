@@ -1,0 +1,71 @@
+@import "Common.less";
+
+button.function { /* 初期状態では非表示にし、地図が使用可能になったらJavaScriptで表示する */
+    display: none;
+}J
+
+ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    > li > label {
+        line-height: 28px;
+    }
+}
+
+legend.in-balloon {
+    margin-top: 3px;
+    margin-bottom: 0;
+    border-bottom: rgba(255,0,0,.3);
+}
+
+li.go-home {
+    margin-right: 40px; /* リロードの隣のボタンを押そうとして、誤ってリロードを押す事故を防ぐ */
+}
+
+div.buildings-container {
+    display: none;
+    position: absolute;
+    background: url('back');
+    width: @ipad-content-width - 6px;
+    height: @ipad-content-height - 9px;
+    top: 3px;
+    left: 3px;
+    border-radius: @border-radius-normal;
+    box-shadow: rgba(0,0,0,.3) 0px 4px 8px;
+    opacity: 1;
+    z-index: 1040;
+}
+
+div.balloon-content {
+    label:after {
+        content: ':';
+    }
+    ul > li {
+        > label {
+            text-align: right;
+            display: inline-block;
+            width: 80px;
+        }
+    }
+    input {
+        width: 400px;
+        font-size: large;
+    }
+    buttton {
+        display: block;
+        font-size: large;
+    }
+    textarea {
+        display: block;
+        width: 500px;
+        height: 5em;
+    }
+    fieldset {
+        margin-bottom: 5px;
+    }
+    .address {
+        display: inline-block;
+    }
+}

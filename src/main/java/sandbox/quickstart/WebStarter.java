@@ -1,6 +1,6 @@
 package sandbox.quickstart;
 
-import jabara.jetty.ServerStarter;
+import jabara.jetty_memcached.MemcachedSessionServerStarter;
 
 import javax.naming.NamingException;
 
@@ -36,10 +36,10 @@ public class WebStarter {
      */
     public static void main(final String[] pArgs) throws NamingException {
         initializeDataSource();
-        final ServerStarter server = new ServerStarter();
-        server.start();
+        // final ServerStarter server = new ServerStarter();
+        // server.start();
         // MemcachedをHttpSessionのストアとして使う場合.
         // 主にHerokuでの運用を意識.
-        // new MemcachedSessionServerStarter().start();
+        new MemcachedSessionServerStarter().start();
     }
 }

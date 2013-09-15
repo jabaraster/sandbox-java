@@ -1,8 +1,10 @@
 var App = {};
 
-App.focus = function(pId) {
-	var tag = document.getElementById(pId);
-	if (tag) {
-		tag.focus();
-	}
+App.restraintDocumentScrollForIPad = function() {
+    $(document).on('touchmove', function(e) {
+        if ($(e.originalEvent.target).attr('type') === 'range') {
+            return;
+        }
+        e.preventDefault();
+    });
 };

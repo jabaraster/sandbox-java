@@ -1,0 +1,30 @@
+<wicket:panel>
+<div class="BuildingListPanel">
+    <div class="menu">
+        <a wicket:id="closer" class="btn btn-lg">
+            <i class="glyphicon glyphicon-white glyphicon-remove"></i>
+            <span></span>
+        </a>
+    </div>
+    <hr />
+    <form wicket:id="form">
+        <div class="form-group">
+            <input wicket:id="namePart" type="text" class="form-control" placeholder="物件名(部分一致)" />
+        </div>
+        <div class="form-group">
+            <input wicket:id="addressPart" type="text" class="form-control" placeholder="住所(部分一致)" />
+        </div>
+        <div class="form-group">
+            <input wicket:id="registrationUserId" type="text" class="form-control" placeholder="担当者ID(完全一致)" />
+        </div>
+        <div>
+            <button wicket:id="searcher" class="btn btn-lg btn-primary">
+                <i class="glyphicon glyphicon-white glyphicon-refresh"></i>
+                <span>検索</span>
+            </button>
+        </div>
+    </form>
+    <hr />
+    <table wicket:id="buildings" class="table table-striped"></table>
+</div>
+</wicket:panel>

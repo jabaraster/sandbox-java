@@ -6,18 +6,23 @@ import jabara.wicket.MarkupIdForceOutputer;
 
 import org.apache.wicket.Page;
 import org.apache.wicket.Session;
+import org.apache.wicket.core.util.resource.UrlResourceStream;
 import org.apache.wicket.guice.GuiceComponentInjector;
+import org.apache.wicket.markup.html.SecurePackageResourceGuard;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
+import org.apache.wicket.request.resource.IResource;
+import org.apache.wicket.request.resource.ResourceReference;
+import org.apache.wicket.request.resource.ResourceStreamResource;
 import org.apache.wicket.util.IProvider;
+import org.apache.wicket.util.time.Duration;
 
-import sandbox.quickstart.service.IAuthenticationService;
 import sandbox.quickstart.web.ui.page.LoginPage;
 import sandbox.quickstart.web.ui.page.LogoutPage;
+import sandbox.quickstart.web.ui.page.MapPage;
 import sandbox.quickstart.web.ui.page.RestrictedPageBase;
-import sandbox.quickstart.web.ui.page.TopPage;
 
 import com.google.inject.Injector;
 
@@ -43,7 +48,14 @@ public class WicketApplication extends WebApplication {
      */
     @Override
     public Class<? extends Page> getHomePage() {
-        return TopPage.class;
+        return MapPage.class;
+    }
+
+    /**
+     * @return -
+     */
+    public Injector getInjector() {
+        return this.injectorProvider.get();
     }
 
     /**
@@ -51,7 +63,7 @@ public class WicketApplication extends WebApplication {
      */
     @Override
     public Session newSession(final Request pRequest, @SuppressWarnings("unused") final Response pResponse) {
-        return new AppSession(pRequest, this.injectorProvider.get().getInstance(IAuthenticationService.class));
+        return new AppSession(pRequest);
     }
 
     /**
@@ -61,6 +73,7 @@ public class WicketApplication extends WebApplication {
     protected void init() {
         super.init();
 
+        mountResources();
         mountPages();
         initializeEncoding();
         initializeInjection();
@@ -82,11 +95,16 @@ public class WicketApplication extends WebApplication {
     }
 
     private void initializeSecurity() {
+        final SecurePackageResourceGuard guard = new SecurePackageResourceGuard();
+        guard.addPattern("+*.ttf"); //$NON-NLS-1$
+        guard.addPattern("+*.woff"); //$NON-NLS-1$
+        getResourceSettings().setPackageResourceGuard(guard);
+
         getSecuritySettings().setAuthorizationStrategy(new LoginPageInstantiationAuthorizer() {
 
             @Override
             protected Class<? extends Page> getFirstPageType() {
-                return TopPage.class;
+                return MapPage.class;
             }
 
             @Override
@@ -115,5 +133,26 @@ public class WicketApplication extends WebApplication {
     private void mountPages() {
         this.mountPage("login", LoginPage.class); //$NON-NLS-1$
         this.mountPage("logout", LogoutPage.class); //$NON-NLS-1$
+        this.mountPage("map", MapPage.class); //$NON-NLS-1$
+    }
+
+    @SuppressWarnings({ "nls", "serial" })
+    private void mountResources() {
+        mountResource("back", new ResourceReference("back") {
+            @SuppressWarnings("resource")
+            @Override
+            public IResource getResource() {
+                return new ResourceStreamResource(new UrlResourceStream(WicketApplication.class.getResource("brickwall.png"))) //
+                        .setCacheDuration(Duration.days(10)) //
+                ;
+            }
+        });
+    }
+
+    /**
+     * @return -
+     */
+    public static WicketApplication get() {
+        return (WicketApplication) WebApplication.get();
     }
 }
