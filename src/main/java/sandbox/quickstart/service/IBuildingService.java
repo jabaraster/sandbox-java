@@ -52,6 +52,21 @@ public interface IBuildingService {
     List<ECandidateBuilding> search(SearchCondition pCondition, long pFirst, long pCount, Sort pSort);
 
     /**
+     * @param pCondition -
+     * @param pSort -
+     * @return -
+     */
+    List<ECandidateBuilding> search(SearchCondition pCondition, Sort pSort);
+
+    /**
+     * @param pLoginUser -
+     * @param pId -
+     * @param pUpdateValues -
+     * @param pImageData -
+     */
+    void update(LoginUser pLoginUser, long pId, ECandidateBuilding pUpdateValues, InputStream pImageData);
+
+    /**
      * @see IBuildingService#search(SearchCondition, long, long, Sort)
      */
     public static class SearchCondition implements Serializable {

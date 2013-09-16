@@ -10,6 +10,7 @@ import org.junit.Test;
 import sandbox.quickstart.entity.ECandidateBuilding;
 import sandbox.quickstart.entity.EUser;
 import sandbox.quickstart.entity.LatLng;
+import sandbox.quickstart.model.CandidateBuildingModel;
 
 /**
  * @author jabaraster
@@ -32,7 +33,7 @@ public class BuildingResourceTest {
         cb.setPosition(new LatLng(30.111, 120.394));
         cb.setRegistrationUser(new EUser());
 
-        System.out.println(JSON.encode(new BuildingResource.CandidateBuilding(cb), true));
+        System.out.println(JSON.encode(new CandidateBuildingModel(cb), true));
     }
 
 }

@@ -15,7 +15,7 @@ public class LatLng implements Serializable {
     private static final long serialVersionUID = 7937102119649040232L;
 
     private double            latitude;
-    private double            longitute;
+    private double            longitude;
 
     /**
      * 
@@ -26,11 +26,11 @@ public class LatLng implements Serializable {
 
     /**
      * @param pLatitude -
-     * @param pLongitute -
+     * @param pLongitude -
      */
-    public LatLng(final double pLatitude, final double pLongitute) {
+    public LatLng(final double pLatitude, final double pLongitude) {
         this.latitude = pLatitude;
-        this.longitute = pLongitute;
+        this.longitude = pLongitude;
     }
 
     /**
@@ -51,7 +51,7 @@ public class LatLng implements Serializable {
         if (Double.doubleToLongBits(this.latitude) != Double.doubleToLongBits(other.latitude)) {
             return false;
         }
-        if (Double.doubleToLongBits(this.longitute) != Double.doubleToLongBits(other.longitute)) {
+        if (Double.doubleToLongBits(this.longitude) != Double.doubleToLongBits(other.longitude)) {
             return false;
         }
         return true;
@@ -67,8 +67,8 @@ public class LatLng implements Serializable {
     /**
      * @return longituteを返す.
      */
-    public double getLongitute() {
-        return this.longitute;
+    public double getLongitude() {
+        return this.longitude;
     }
 
     /**
@@ -81,7 +81,7 @@ public class LatLng implements Serializable {
         long temp;
         temp = Double.doubleToLongBits(this.latitude);
         result = prime * result + (int) (temp ^ temp >>> 32);
-        temp = Double.doubleToLongBits(this.longitute);
+        temp = Double.doubleToLongBits(this.longitude);
         result = prime * result + (int) (temp ^ temp >>> 32);
         return result;
     }
@@ -96,8 +96,8 @@ public class LatLng implements Serializable {
     /**
      * @param pLongitute longituteを設定.
      */
-    public void setLongitute(final double pLongitute) {
-        this.longitute = pLongitute;
+    public void setLongitude(final double pLongitute) {
+        this.longitude = pLongitute;
     }
 
     /**
@@ -106,6 +106,6 @@ public class LatLng implements Serializable {
     @SuppressWarnings("nls")
     @Override
     public String toString() {
-        return "LatLng [latitude=" + this.latitude + ", longitute=" + this.longitute + "]";
+        return "LatLng [latitude=" + this.latitude + ", longitude=" + this.longitude + "]";
     }
 }

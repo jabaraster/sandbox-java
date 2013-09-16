@@ -13,6 +13,7 @@ function initializeControl() {
     var menu = $('#menu');
     $('.show-search').click(function() {
         $('.buildings-container').show('normal', function() {
+            // 自動で最新状態を表示する
             document.getElementById(buildingsSearcherId).click();
         });
     });
@@ -91,18 +92,18 @@ function Marker(pArgs) {
     var balloon = new maps.InfoWindow({
         content: content.get(0)
     });
-    var savedData = null;
+    var savedData = pArgs.savedData ? pArgs.savedData : null;
     var self = this;
+
     maps.event.addListener(marker, 'click', function() {
-        balloon.open(pArgs.map, marker);
-        self.publish('balloonOpen', self);
+        self.openBalloon();
     });
 
     content.find('.delete-marker').click(function() {
         if (!confirm('物件情報を削除してよろしいですか？')) {
             return false;
         }
-        marker.setMap(null);
+        self.remove();
         return false;
     });
     var addressInput = content.find('input[name="address"]');
@@ -111,7 +112,7 @@ function Marker(pArgs) {
             if (pResult.length == 0) {
                 addressInput.attr('placeholder', '住所が取得できませんでした.');
             } else {
-                addressInput.val(pResult[0].formatted_address);
+                addressInput.val(pResult[0].formatted_address.replace('日本, ', ''));
             }
         });
         return false;
@@ -139,6 +140,7 @@ function Marker(pArgs) {
                 alert('保存しました！');
             },
             error: function() {
+                console.log(arguments);
                 alert('保存に失敗しました...');
             },
             dummy: null
@@ -146,9 +148,24 @@ function Marker(pArgs) {
         return false;
     });
 
+    this.isSaved = function() {
+        return savedData != null && savedData.id != null;
+    };
+
+    var idHidden = content.find('input[name="id"]');
+    var name = content.find('input[name="name"]');
+    var address = content.find('input[name="address"]');
+    var freeText = content.find('textarea');
     this.openBalloon = function() {
         pArgs.map.panTo(marker.getPosition());
-        self.publish('willOpenBalloon', self);
+        if (self.isSaved()) {
+            idHidden.val(savedData.id);
+            name.val(savedData.name);
+            address.val(savedData.address);
+            $.get(contextPath + '/rest/building/' + savedData.id + '/freeText', null, function(pData) {
+                freeText.val(pData);
+            });
+        }
         balloon.open(pArgs.map, marker);
         self.publish('balloonOpen', self);
     };
@@ -165,8 +182,14 @@ function Marker(pArgs) {
         return savedData == null ? null : savedData.id;
     };
 
-    // 吹き出しを開くが、少し時間を置かないとピンが落ちるアニメが見えなくなる.
-    setTimeout(function() { self.openBalloon(); }, 1000);
+    this.remove = function() {
+        marker.setMap(null);
+    };
+
+    if (pArgs.open === true) {
+        // 吹き出しを開くが、少し時間を置かないとピンが落ちるアニメが見えなくなる.
+        setTimeout(function() { self.openBalloon(); }, 1000);
+    }
 }
 
 function Markers(pArgs) {
@@ -176,6 +199,7 @@ function Markers(pArgs) {
     var self = this;
     var balloonOpeningMarker = null;
     var balloonOpenListener = function(pMarker) {
+        self.hideBuildingsPanel();
         if (balloonOpeningMarker === pMarker) {
             return;
         }
@@ -187,17 +211,25 @@ function Markers(pArgs) {
     var savedListener = function(pMarker) {
         id2Marker[pMarker.getId()] = pMarker;
     };
-    var willOpenBalloonListener = function(pMarker) {
-        self.hideBuildingsPanel();
-    };
 
-    this.addNewMarker = function(pArgs) {
+    var adjustArgs = function(pArgs) {
         pArgs.balloonOpenListener = balloonOpenListener;
         pArgs.savedListener = savedListener;
-        pArgs.willOpenBalloonListener = willOpenBalloonListener;
         pArgs.map = map;
         if (!('animation' in pArgs)) pArgs.animation = maps.Animation.DROP;
         if (!('draggable' in pArgs)) pArgs.draggable = true;
+    };
+
+    this.addMarker = function(pArgs) {
+        adjustArgs(pArgs);
+        var marker = new Marker(pArgs);
+        markers.push(marker);
+        id2Marker[pArgs.savedData.id] = marker;
+    };
+
+    this.addNewMarker = function(pArgs) {
+        adjustArgs(pArgs);
+        if (!('open' in pArgs)) pArgs.open = true;
         markers.push(new Marker(pArgs));
     }
 
@@ -211,5 +243,26 @@ function Markers(pArgs) {
     };
     this.hideBuildingsPanel = function() {
         buildingsPanel.hide('normal');
+    };
+
+    this.clear = function() {
+        $(markers).each(function(_, marker) {
+            marker.remove();
+        });
+        markers = [];
+        id2Marker = {};
+    };
+
+    this.replace = function(pMarkerArray) {
+        // 一度全てのマーカを削除して、作り直す.
+        // この実装はかなり遅い可能性があるが、当面は簡単に実装できるので、この方式でいく.
+        self.clear();
+        $(pMarkerArray).each(function(_, pMarker) {
+            var arg = {
+                position: new maps.LatLng(pMarker.position.latitude, pMarker.position.longitude),
+                savedData: pMarker
+            };
+            self.addMarker(arg);
+        });
     };
 }

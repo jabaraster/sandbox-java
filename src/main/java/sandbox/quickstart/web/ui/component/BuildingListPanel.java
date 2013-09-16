@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -38,27 +39,32 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.request.cycle.RequestCycle;
 
 import sandbox.quickstart.entity.ECandidateBuilding;
 import sandbox.quickstart.entity.ECandidateBuilding_;
 import sandbox.quickstart.entity.EUser_;
 import sandbox.quickstart.service.IBuildingService;
 import sandbox.quickstart.service.IBuildingService.SearchCondition;
+import sandbox.quickstart.web.LoginUserHolder;
 
 /**
  * @author jabaraster
  */
 @SuppressWarnings("serial")
 public class BuildingListPanel extends Panel {
-    private static final long                                        serialVersionUID = 3519646252752890214L;
+    private static final long                                        serialVersionUID     = 3519646252752890214L;
 
-    private final Handler                                            handler          = new Handler();
+    private final Handler                                            handler              = new Handler();
 
     @Inject
     IBuildingService                                                 buildingService;
 
+    private final BuildingDataProvider                               buildingDataProvider = new BuildingDataProvider();
+
     private AjaxLink<?>                                              closer;
     private IAjaxCallback                                            onCloseClick;
+    private IAjaxCallback                                            onSearch;
 
     private Form<?>                                                  form;
     private TextField<String>                                        namePart;
@@ -80,6 +86,17 @@ public class BuildingListPanel extends Panel {
     /**
      * @return -
      */
+    public SearchCondition getCondition() {
+        final SearchCondition condition = new SearchCondition();
+        condition.setAddressPart(getAddressPart().getModelObject());
+        condition.setNamePart(getNamePart().getModelObject());
+        condition.setRegistrationUserId(getRegistrationUserId().getModelObject());
+        return condition;
+    }
+
+    /**
+     * @return -
+     */
     public AjaxButton getSearcher() {
         if (this.searcher == null) {
             this.searcher = new IndicatingAjaxButton("searcher") { //$NON-NLS-1$
@@ -90,6 +107,13 @@ public class BuildingListPanel extends Panel {
             };
         }
         return this.searcher;
+    }
+
+    /**
+     * @return -
+     */
+    public Sort getSortCondition() {
+        return this.buildingDataProvider.getSortCondition();
     }
 
     /**
@@ -106,6 +130,13 @@ public class BuildingListPanel extends Panel {
      */
     public void setOnCloseClick(final IAjaxCallback pCallback) {
         this.onCloseClick = pCallback;
+    }
+
+    /**
+     * @param pCallback onSearchを設定.
+     */
+    public void setOnSearch(final IAjaxCallback pCallback) {
+        this.onSearch = pCallback;
     }
 
     private TextField<String> getAddressPart() {
@@ -131,7 +162,7 @@ public class BuildingListPanel extends Panel {
                     , p // propertyExpression
             ));
 
-            this.buildings = new AjaxFallbackDefaultDataTable<>("buildings", columns, new BuildingDataProvider(), 5); //$NON-NLS-1$
+            this.buildings = new AjaxFallbackDefaultDataTable<>("buildings", columns, this.buildingDataProvider, 5); //$NON-NLS-1$
         }
         return this.buildings;
     }
@@ -168,7 +199,9 @@ public class BuildingListPanel extends Panel {
 
     private TextField<String> getRegistrationUserId() {
         if (this.registrationUserId == null) {
-            this.registrationUserId = new TextField<>("registrationUserId", Model.of("")); //$NON-NLS-1$ //$NON-NLS-2$
+            final HttpServletRequest request = (HttpServletRequest) RequestCycle.get().getRequest().getContainerRequest();
+            final String u = LoginUserHolder.get(request.getSession()).getUserId();
+            this.registrationUserId = new TextField<>("registrationUserId", Model.of(u)); //$NON-NLS-1$ 
         }
         return this.registrationUserId;
     }
@@ -208,10 +241,8 @@ public class BuildingListPanel extends Panel {
 
         @Override
         public Iterator<? extends ECandidateBuilding> iterator(final long pFirst, final long pCount) {
-            final SortParam<String> sort = getSort();
-            final Sort s = sort.isAscending() ? Sort.asc(sort.getProperty()) : Sort.desc(sort.getProperty());
-
-            final SearchCondition condition = createCondition();
+            final Sort s = getSortCondition();
+            final SearchCondition condition = getCondition();
             return BuildingListPanel.this.buildingService.search(condition, pFirst, pCount, s).iterator();
         }
 
@@ -222,16 +253,13 @@ public class BuildingListPanel extends Panel {
 
         @Override
         public long size() {
-            final SearchCondition condition = createCondition();
+            final SearchCondition condition = getCondition();
             return BuildingListPanel.this.buildingService.count(condition);
         }
 
-        private SearchCondition createCondition() {
-            final SearchCondition condition = new SearchCondition();
-            condition.setAddressPart(getAddressPart().getModelObject());
-            condition.setNamePart(getNamePart().getModelObject());
-            condition.setRegistrationUserId(getRegistrationUserId().getModelObject());
-            return condition;
+        private Sort getSortCondition() {
+            final SortParam<String> sort = getSort();
+            return sort.isAscending() ? Sort.asc(sort.getProperty()) : Sort.desc(sort.getProperty());
         }
     }
 
@@ -245,6 +273,9 @@ public class BuildingListPanel extends Panel {
 
         private void search(final AjaxRequestTarget pTarget) {
             pTarget.add(getBuildings());
+            if (BuildingListPanel.this.onSearch != null) {
+                BuildingListPanel.this.onSearch.call(pTarget);
+            }
         }
     }
 }

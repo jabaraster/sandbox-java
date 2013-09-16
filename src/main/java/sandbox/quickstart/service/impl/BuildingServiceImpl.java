@@ -83,7 +83,6 @@ public class BuildingServiceImpl extends JpaDaoBase implements IBuildingService 
     public void insert(final LoginUser pLoginUser, final ECandidateBuilding pNewBuilding, final InputStream pImageData) {
         ArgUtil.checkNull(pLoginUser, "pLoginUser"); //$NON-NLS-1$
         ArgUtil.checkNull(pNewBuilding, "pNewBuilding"); //$NON-NLS-1$
-        ArgUtil.checkNull(pImageData, "pImageData"); //$NON-NLS-1$
 
         if (pNewBuilding.isPersisted()) {
             throw new IllegalArgumentException("永続化済みのエンティティは処理できません. " + ECandidateBuilding.class.getSimpleName() + ".id -> '" //$NON-NLS-1$ //$NON-NLS-2$
@@ -95,6 +94,8 @@ public class BuildingServiceImpl extends JpaDaoBase implements IBuildingService 
             pNewBuilding.setRegistrationUser(loginUser);
 
             getEntityManager().persist(pNewBuilding);
+
+            // TODO pImageDataの処理
 
         } catch (final NotFound e) {
             throw ExceptionUtil.rethrow(e);
@@ -116,6 +117,12 @@ public class BuildingServiceImpl extends JpaDaoBase implements IBuildingService 
     public List<ECandidateBuilding> search(final SearchCondition pCondition, final long pFirst, final long pCount, final Sort pSort) {
         ArgUtil.checkNull(pCondition, "pCondition"); //$NON-NLS-1$
         ArgUtil.checkNull(pSort, "pSort"); //$NON-NLS-1$
+        if (pFirst > Integer.MAX_VALUE) {
+            throw new IllegalArgumentException("pFirst is over Integer.MAX_VALUE. -> " + pFirst); //$NON-NLS-1$
+        }
+        if (pCount > Integer.MAX_VALUE) {
+            throw new IllegalArgumentException("pCount is over Integer.MAX_VALUE. -> " + pCount); //$NON-NLS-1$
+        }
 
         final EntityManager em = getEntityManager();
         final CriteriaBuilder builder = em.getCriteriaBuilder();
@@ -129,6 +136,39 @@ public class BuildingServiceImpl extends JpaDaoBase implements IBuildingService 
         query.orderBy(convertOrder(pSort, builder, root));
 
         return em.createQuery(query).setFirstResult((int) pFirst).setMaxResults((int) pCount).getResultList();
+    }
+
+    /**
+     * @see sandbox.quickstart.service.IBuildingService#search(sandbox.quickstart.service.IBuildingService.SearchCondition, jabara.general.Sort)
+     */
+    @Override
+    public List<ECandidateBuilding> search(final SearchCondition pCondition, final Sort pSort) {
+        return this.search(pCondition, 0, Integer.MAX_VALUE, pSort);
+    }
+
+    /**
+     * @see sandbox.quickstart.service.IBuildingService#update(sandbox.quickstart.model.LoginUser, long, sandbox.quickstart.entity.ECandidateBuilding,
+     *      java.io.InputStream)
+     */
+    @Override
+    public void update(final LoginUser pLoginUser, final long pId, final ECandidateBuilding pUpdateValues, final InputStream pImageData) {
+        ArgUtil.checkNull(pLoginUser, "pLoginUser"); //$NON-NLS-1$
+        ArgUtil.checkNull(pUpdateValues, "pUpdateValues"); //$NON-NLS-1$
+
+        try {
+            final ECandidateBuilding inDb = this.search(pId);
+            final EUser registrationUser = this.userService.search(pLoginUser.getId());
+            inDb.setAddress(pUpdateValues.getAddress());
+            inDb.setFreeText(pUpdateValues.getFreeText());
+            inDb.setName(pUpdateValues.getName());
+            inDb.setPosition(pUpdateValues.getPosition());
+            inDb.setRegistrationUser(registrationUser);
+
+            // TODO pImageDataの処理
+
+        } catch (final NotFound e) {
+            throw ExceptionUtil.rethrow(e);
+        }
     }
 
     private static <X> void addLikePredicateIfNotEmpty( //
