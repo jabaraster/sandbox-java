@@ -23,10 +23,15 @@ import com.google.inject.ImplementedBy;
 public interface IBuildingService {
 
     /**
-     * @param pCondition TODO
+     * @param pCondition -
      * @return -
      */
     long count(SearchCondition pCondition);
+
+    /**
+     * @param pId -
+     */
+    void deleteById(long pId);
 
     /**
      * @param pLoginUser -
@@ -118,5 +123,4 @@ public interface IBuildingService {
             this.registrationUserId = pRegistrationUserId;
         }
     }
-
 }

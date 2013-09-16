@@ -15,6 +15,7 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -59,8 +60,19 @@ public class BuildingResource {
      * @return -
      */
     @Path("{id}")
+    @DELETE
+    public Response delete(@PathParam("id") final long pId) {
+        this.buildingService.deleteById(pId);
+        return Response.noContent().build();
+    }
+
+    /**
+     * @param pId -
+     * @return -
+     */
+    @Path("{id}")
     @GET
-    @Produces({ javax.ws.rs.core.MediaType.APPLICATION_JSON })
+    @Produces({ MediaType.APPLICATION_JSON })
     public Response get(@PathParam("id") final long pId) {
         try {
             return Response.ok(new CandidateBuildingModel(this.buildingService.search(pId))).build();

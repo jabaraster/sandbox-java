@@ -103,7 +103,22 @@ function Marker(pArgs) {
         if (!confirm('物件情報を削除してよろしいですか？')) {
             return false;
         }
-        self.remove();
+        if (!self.isSaved()) {
+            return false;
+        }
+        $.ajax({
+            async: true,
+            type: 'delete',
+            url: contextPath + '/rest/building/' + savedData.id,
+            success: function() {
+                self.remove();
+            },
+            error: function() {
+                alert('削除に失敗しました...');
+                console.log(arguments);
+            },
+            dummy: null
+        });
         return false;
     });
     var addressInput = content.find('input[name="address"]');

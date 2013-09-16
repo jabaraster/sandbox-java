@@ -76,6 +76,19 @@ public class BuildingServiceImpl extends JpaDaoBase implements IBuildingService 
     }
 
     /**
+     * @see sandbox.quickstart.service.IBuildingService#deleteById(long)
+     */
+    @Override
+    public void deleteById(final long pId) {
+        try {
+            final ECandidateBuilding cb = this.findByIdCore(ECandidateBuilding.class, pId);
+            getEntityManager().remove(cb);
+        } catch (final NotFound e) {
+            // 処理なし
+        }
+    }
+
+    /**
      * @see sandbox.quickstart.service.IBuildingService#insert(sandbox.quickstart.model.LoginUser, sandbox.quickstart.entity.ECandidateBuilding,
      *      java.io.InputStream)
      */
