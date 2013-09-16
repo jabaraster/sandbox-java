@@ -83,7 +83,7 @@ public class MapPage extends RestrictedPageBase {
             this.buildings.setOnCloseClick(new IAjaxCallback() {
                 @Override
                 public void call(final AjaxRequestTarget pTarget) {
-                    pTarget.appendJavaScript("$('.buildings-container').hide('normal')"); //$NON-NLS-1$
+                    pTarget.appendJavaScript("markers.hideBuildingsPanel();"); //$NON-NLS-1$
                 }
             });
             this.buildings.setOutputMarkupPlaceholderTag(true);

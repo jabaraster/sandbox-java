@@ -3,6 +3,7 @@
  */
 package sandbox.quickstart.web.ui.component;
 
+import jabara.bean.BeanProperty;
 import jabara.general.Sort;
 import jabara.jpa.entity.EntityBase_;
 import jabara.wicket.CssUtil;
@@ -21,15 +22,20 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.ajax.markup.html.IndicatingAjaxButton;
 import org.apache.wicket.extensions.ajax.markup.html.repeater.data.table.AjaxFallbackDefaultDataTable;
+import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortParam;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
@@ -114,7 +120,9 @@ public class BuildingListPanel extends Panel {
             final List<IColumn<ECandidateBuilding, String>> columns = new ArrayList<>();
             columns.add(new AttributeColumn<ECandidateBuilding>(ECandidateBuilding.getMeta(), EntityBase_.id));
             columns.add(new AttributeColumn<ECandidateBuilding>(ECandidateBuilding.getMeta(), ECandidateBuilding_.name));
-            columns.add(new AttributeColumn<ECandidateBuilding>(ECandidateBuilding.getMeta(), ECandidateBuilding_.address));
+
+            final BeanProperty v = ECandidateBuilding.getMeta().get(ECandidateBuilding_.address.getName());
+            columns.add(new AddressLinkColumn(Models.readOnly(v.getLocalizedName()), ECandidateBuilding_.address.getName()));
 
             final String p = ECandidateBuilding_.registrationUser.getName() + "." + EUser_.userId.getName(); //$NON-NLS-1$
             columns.add(new PropertyColumn<ECandidateBuilding, String>( //
@@ -163,6 +171,32 @@ public class BuildingListPanel extends Panel {
             this.registrationUserId = new TextField<>("registrationUserId", Model.of("")); //$NON-NLS-1$ //$NON-NLS-2$
         }
         return this.registrationUserId;
+    }
+
+    private static class AddressLinkColumn extends AbstractColumn<ECandidateBuilding, String> {
+
+        AddressLinkColumn(final IModel<String> pDisplayModel, final String pSortProperty) {
+            super(pDisplayModel, pSortProperty);
+        }
+
+        @Override
+        public void populateItem( //
+                final Item<ICellPopulator<ECandidateBuilding>> pCellItem //
+                , final String pComponentId //
+                , final IModel<ECandidateBuilding> pRowModel) {
+
+            pCellItem.add(new AddressLinkPanel(pComponentId, pRowModel));
+        }
+    }
+
+    private static class AddressLinkPanel extends Panel {
+
+        @SuppressWarnings("boxing")
+        AddressLinkPanel(final String pId, final IModel<ECandidateBuilding> pRowModel) {
+            super(pId);
+            this.add(new Label("address", pRowModel.getObject().getAddress())); //$NON-NLS-1$
+            this.add(new HiddenField<>("candidateId", Models.readOnly(pRowModel.getObject().getId().longValue()))); //$NON-NLS-1$
+        }
     }
 
     private class BuildingDataProvider extends SortableDataProvider<ECandidateBuilding, String> {
