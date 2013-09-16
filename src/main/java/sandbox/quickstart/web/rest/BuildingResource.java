@@ -129,9 +129,6 @@ public class BuildingResource {
         }
         try {
             this.buildingService.update(loginUser, Long.parseLong(pId), cb, pIn);
-            //            final URI uri = UriBuilder.fromPath("") //$NON-NLS-1$
-            // .path(METHOD_GET) //
-            // .build(pId);
             return Response.noContent().build();
 
         } catch (final NumberFormatException e) {
