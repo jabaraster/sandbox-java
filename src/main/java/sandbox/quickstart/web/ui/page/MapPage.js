@@ -104,6 +104,7 @@ function Marker(pArgs) {
             return false;
         }
         if (!self.isSaved()) {
+            self.remove();
             return false;
         }
         $.ajax({
